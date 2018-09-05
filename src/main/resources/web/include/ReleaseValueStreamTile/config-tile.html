@@ -1,0 +1,13 @@
+<div data-ng-controller="test.TestTileController as vm">
+    <h1>Custom configuration page of {{vm.tileName}}</h1>
+
+    <div class="form-horizontal mtl">
+        <div class="form-group">
+            <label for="title" class="control-label col-xs-3">Title</label>
+            <div class="col-xs-9">
+                <input type="text" id="title" name="title" required
+                       data-ng-model="xlrTile.tile.properties.title" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>

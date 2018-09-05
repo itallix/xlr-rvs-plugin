@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        ["public", "thirdparty", "releases"].each { r ->
+            maven {
+                credentials {
+                    username nexusUserName
+                    password nexusPassword
+                }
+                url "${nexusBaseUrl}/repositories/${r}"
+            }
+        }
+    }
+
+    dependencies {
+        classpath "com.xebialabs.gradle.plugins:gradle-xl-plugins-plugin:${xlPluginsPluginVersion}"
+        classpath "com.xebialabs.gradle.plugins.xlrelease:gradle-xl-release-plugin-plugin:${xlReleasePluginPluginVersion}"
+    }
+}
+plugins{
+    id "com.github.hierynomus.license" version "0.14.0"
+}
+
+apply plugin: 'com.github.hierynomus.license'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+apply plugin: 'com.xebialabs.xl-release.plugin'
+apply plugin: 'xebialabs.root.opinions'
+apply plugin: 'xebialabs.opinions'
+apply plugin: 'com.xebialabs.dependency'
+
+group 'com.xebialabs.xlrelease.plugins'
+
+dependencies {
+    compile fileTree(dir: "${xlReleasePlugin.xlReleaseHome}/lib", includes: ['*.jar'])
+}
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+sourceSets.main.groovy.srcDirs += ["src/main/java"]
+sourceSets.test.resources.srcDirs = ["src/test/resources"]
+
+
+sourceSets {
+    test {
+        resources {
+            exclude '**/*.js'
+        }
+    }
+}
+
+license {
+    header project.file('HEADER')
+    ignoreFailures false
+    excludes(["**/*.json", "**/*.yaml", "**/*.yml"])
+}
+
+task licenseFormatJs(type: com.hierynomus.gradle.license.tasks.LicenseFormat) {
+    source = fileTree(dir: "src").include("**/*.js")
+}
+licenseFormat.dependsOn licenseFormatJs
+
+task licenseCheckJs(type: com.hierynomus.gradle.license.tasks.LicenseCheck) {
+    source = fileTree(dir: "src").include("**/*.js")
+}
+
+uploadArchives {
+    repositories {
+        maven {
+            credentials {
+                username nexusUserName
+                password nexusPassword
+            }
+            url "${nexusBaseUrl}/repositories/releases/"
+        }
+    }
+}

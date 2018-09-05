@@ -1,0 +1,153 @@
+@import "../../../../../../../core/xlr-ui/app/styles/xlrelease/variables";
+@import "../../../../../../../core/xlr-ui/app/styles/xlrelease/common";
+
+.release-value-stream-tile {
+  @phaseWidth: 250px;
+  @outsideSpace: 10px;
+  @insideSpace: 5px;
+  @phaseHeaderHeight: 36px;
+  @border: 1px;
+
+  white-space: nowrap;
+  padding: 90px 15px 0 15px;
+  @media print {
+    white-space: initial !important;
+  }
+
+  .release {
+    cursor: pointer;
+    .expandWithContent();
+
+    .section-header {
+      padding-left: @outsideSpace;
+      padding-right: @outsideSpace;
+      background-color: @doneBackgroundColor;
+      font-weight: normal;
+
+      .release-title {
+        font-weight: bold;
+      }
+
+      .release-details {
+        margin-left: 10px;
+        .lightText;
+      }
+    }
+
+    .critical-phases-counter {
+      color: @flagAtRiskColor;
+    }
+
+    .section-body {
+      padding-left: @outsideSpace;
+      padding-right: 0;
+      background-color: @doneBackgroundColor;
+
+      .phase {
+        display: inline-block;
+        margin: @outsideSpace @outsideSpace @outsideSpace 0;
+        width: @phaseWidth;
+
+        .phase-body {
+          border: 1px solid @sectionBorderColor;
+          background-color: @white;
+        }
+
+        .phase-header {
+          border-top: 5px solid @defaultPhaseColor;
+          border-bottom: 1px solid @sectionBorderColor;
+          height: @phaseHeaderHeight;
+
+          .phase-title {
+            @arrowSize: 12px;
+            float: left;
+            padding: @insideSpace;
+            .ellipsis();
+            height: @phaseHeaderHeight - 2 * @insideSpace;
+            width: @phaseWidth - 2 * (@insideSpace + @border) - @arrowSize;
+          }
+        }
+
+        &.done {
+          background-color: @doneBackgroundColor;
+          .lightText();
+
+          .phase-header {
+            border-color: @lightgray;
+          }
+        }
+
+        &.critical {
+          .phase-header {
+            background-color: @flagAtRiskColor;
+            border-bottom: 1px solid @flagAtRiskColor;
+            color: @white;
+          }
+          .phase-content {
+            border-left: 1px solid @flagAtRiskColor;
+            border-right: 1px solid @flagAtRiskColor;
+          }
+          .phase-body {
+            border-left: 0;
+            border-right: 0;
+            border-bottom: 1px solid @flagAtRiskColor;
+          }
+        }
+
+        .count-warning {
+          color: @orange;
+        }
+
+        .count-error {
+          color: @flagAtRiskColor;
+        }
+
+        .phase-content {
+          padding: 10px;
+          height: 4.5em;
+          vertical-align: top;
+
+          .counters {
+            position: relative;
+            top: 4px;
+          }
+
+          .counters {
+            position: relative;
+            top: 4px;
+          }
+
+          .active-phase-progression {
+            font-size: xx-large;
+            float: left;
+            margin-top: 0.2em;
+            margin-right: 0.3em;
+            margin-left: 0.3em;
+          }
+        }
+
+        .phase-footer {
+          border: 1px solid @doneBackgroundColor;
+          margin-top: 5px;
+          text-align: center;
+
+          .phase-duration {
+            font-weight: bold;
+          }
+
+          .phase-duration-graph {
+            .highcharts-container {
+              display: inline;
+              // Important needed there, otherwise in firefox highcharts adds a top style property over the element.
+              top: 4px !important;
+
+              div {
+                display: inline;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+<div class="release-value-stream-tile" data-ng-controller="rvsTile.ReleaseValueStreamTileController as vm">
+    <div xlr-tile-button on-click="vm.refresh()" title="Refresh" css-class="button primary"
+         icon="glyphicon glyphicon-refresh"></div>
+    <div ng-if="!vm.loading">
+        <a class="release section color-inherited" ui-sref="vm.release({releaseId: release.id})">
+            <div class="section-header">
+                <span class="release-title">{{ vm.release.title }}</span>
+                <span class="release-details">From {{ vm.release.startDate | date:'mediumDate' }} to {{ vm.release.endDate | date:'mediumDate' }} | Duration {{ getCIDuration(release) | duration}}
+                            <span class="critical-phases-counter" ng-show="vm.getCriticalPhasesCount(release) > 0">
+                                | <span ng-pluralize count="vm.getCriticalPhasesCount(release)"
+                                        when="{'0': '{} tasks', '1': '1 Critical phase', 'other': '{} Critical phases', 'many': '{} Critical phases', 'few': '{} Critical phases'}"></span>
+                            </span>
+                            <span class="label label-aborted" ng-show="vm.release.status == 'ABORTED'">Aborted</span>
+                        </span>
+            </div>
+            <div class="section-body">
+                <div class="phase" ng-repeat="phase in vm.release.phases"
+                     ng-class="{'done': vm.isPhaseReadOnly(phase), 'critical': vm.isCritical(phase)}">
+                    <div class="phase-body">
+                        <div class="phase-header" ng-style="{'border-top-color': phase.color}">
+                            <span class="phase-title">{{ phase.title }}</span>
+                        </div>
+                        <div class="phase-content">
+                                        <span ng-pluralize count="vm.getLeafTasks(phase).length"
+                                              when="{'0': '{} tasks', '1': '1 task', 'other': '{} tasks', 'many': '{} tasks', 'few': '{} tasks'}"></span>
+                            <br/>
+                            <task-counters class="counters" flags-count="phase.taskFlaggedCount"
+                                           delays-count="phase.taskDelayCount"
+                                           failures-count="phase.taskFailureCount"></task-counters>
+                        </div>
+                    </div>
+                    <div class="phase-footer">
+                        <span class="phase-duration">{{ vm.getCIDuration(phase) | duration }}</span>, {{
+                        vm.getDurationPercentage(vm.release, phase) }}%
+                        <span class="phase-duration-graph" phase-duration></span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <div class="clearfix"></div>
+    </div>
+
+    <div ng-if="vm.loading" class="spinner" style="text-align: center">
+        <img src="static/@project.version@/styles/img/big-ajax-loader.gif" alt="Loading..."/>
+    </div>
+</div>
