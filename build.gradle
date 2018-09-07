@@ -14,6 +14,7 @@ buildscript {
 
     dependencies {
         classpath "com.xebialabs.gradle.plugins:gradle-xl-plugins-plugin:${xlPluginsPluginVersion}"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.1.1"
         classpath "com.xebialabs.gradle.plugins.xlrelease:gradle-xl-release-plugin-plugin:${xlReleasePluginPluginVersion}"
     }
 }
@@ -22,8 +23,9 @@ plugins{
 }
 
 apply plugin: 'com.github.hierynomus.license'
-apply plugin: 'java'
+apply plugin: 'scala'
 apply plugin: 'maven'
+apply plugin: 'com.moowork.node'
 apply plugin: 'groovy'
 apply plugin: 'com.xebialabs.xl-release.plugin'
 apply plugin: 'xebialabs.root.opinions'
@@ -31,26 +33,49 @@ apply plugin: 'xebialabs.opinions'
 apply plugin: 'com.xebialabs.dependency'
 
 group 'com.xebialabs.xlrelease.plugins'
+archivesBaseName = "xlr-rvs-plugin"
+
+node {
+    version = '6.11.5'
+    yarnVersion = '0.22.0'
+    npmVersion= '3.10.9'
+    download = true
+    nodeModulesDir = file("${rootProject.projectDir}")
+}
 
 dependencies {
-    compile fileTree(dir: "${xlReleasePlugin.xlReleaseHome}/lib", includes: ['*.jar'])
+    compile 'org.scala-lang:scala-library:2.12.3'
+    compile "com.xebialabs.xlrelease:xlr-server:$xlReleaseVersion"
+    compile "com.xebialabs.xlrelease.modules:xlr-reports-module:$xlReleaseVersion"
+//    compile fileTree(dir: "${xlReleasePlugin.xlReleaseHome}/lib", includes: ['*.jar'])
 }
-jar {
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-sourceSets.main.groovy.srcDirs += ["src/main/java"]
-sourceSets.test.resources.srcDirs = ["src/test/resources"]
 
+dependencyManagement {
+    importConf "com.xebialabs.xl-platform:xl-reference:${xlPlatformVersion}"
+}
 
 sourceSets {
-    test {
+    // js are processed by webpack
+    main {
+        scala.srcDirs = ["src/main/scala"]
         resources {
             exclude '**/*.js'
         }
     }
+    test {
+        resources {
+            srcDirs = ["src/test/resources"]
+            exclude '**/*.js'
+        }
+    }
 }
+
+task yarnRunBuild(type: YarnTask) {
+    args = ['run', 'build']
+}
+
+yarnRunBuild.dependsOn yarn_install
+processResources.dependsOn yarnRunBuild
 
 license {
     header project.file('HEADER')
@@ -65,16 +90,4 @@ licenseFormat.dependsOn licenseFormatJs
 
 task licenseCheckJs(type: com.hierynomus.gradle.license.tasks.LicenseCheck) {
     source = fileTree(dir: "src").include("**/*.js")
-}
-
-uploadArchives {
-    repositories {
-        maven {
-            credentials {
-                username nexusUserName
-                password nexusPassword
-            }
-            url "${nexusBaseUrl}/repositories/releases/"
-        }
-    }
 }

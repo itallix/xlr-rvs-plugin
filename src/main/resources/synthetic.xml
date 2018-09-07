@@ -9,12 +9,14 @@
            xmlns="http://www.xebialabs.com/deployit/synthetic"
            xsi:schemaLocation="http://www.xebialabs.com/deployit/synthetic synthetic.xsd">
 
-    <type type="rvs.ReleaseValueStreamTile" label="Tile with value stream data" extends="xlrelease.Tile">
+    <type type="rvs.ReleaseValueStreamTile" label="Release value stream tile" extends="xlrelease.ReportTile">
         <property name="uri" hidden="true" default="include/ReleaseValueStreamTile/view-tile.html" />
-        <property name="title" description="Tile with value stream data" default="Tile with value stream data" />
+        <property name="dataSource" hidden="true" kind="string" default="ReleaseValueStream"/>
+        <property name="title" description="Release value stream tile" default="Tile with value stream data" />
         <property name="embedded" kind="boolean" hidden="true" default="true" required="false"/>
-        <property name="supportedScopes" kind="list_of_string" default="release,folder,global" />
-        <property name="width" kind="integer" default="3"/>
-        <property name="height" kind="integer" default="2"/>
+        <property name="supportedScopes" kind="list_of_string" default="folder,global" />
+        <property name="width" kind="integer" default="6"/>
+        <property name="height" kind="integer" default="1"/>
     </type>
+
 </synthetic>

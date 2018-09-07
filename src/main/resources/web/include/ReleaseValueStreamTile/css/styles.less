@@ -1,7 +1,55 @@
-@import "../../../../../../../core/xlr-ui/app/styles/xlrelease/variables";
-@import "../../../../../../../core/xlr-ui/app/styles/xlrelease/common";
-
 .release-value-stream-tile {
+
+  .not-found {
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 30px
+  }
+
+  // PRIMARY COLORS
+  @blue: #0099CC;
+  @yellow: #FCD866;
+  @green: #08B153;
+  @red: #D94C3D;
+  @orange: #FD8D10;
+  @purple: #991C71;
+
+  // SECONDARY COLORS
+  @xldblue: #14B0E4;
+  @lightblue: #5FCBF4;
+  @darkblue: #4C6C87;
+
+  // SHADES OF GRAY
+  @black: #333333;
+  @antracite: #495561;
+  @gray: #999999;
+  @lightgray: #D5D5D5;
+  @background: #F0F0F0;
+  @silver: #F9F9F9;
+  @white: #FFFFFF;
+
+  @doneBackgroundColor: @background;
+
+  @flagAtRiskColor: @red;
+  @sectionBorderColor: @lightgray;
+  @defaultPhaseColor: @blue;
+
+  .expandWithContent() {
+    float: left;
+  }
+
+  .lightText() {
+    color: @gray !important;
+  }
+
+  .ellipsis() {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   @phaseWidth: 250px;
   @outsideSpace: 10px;
   @insideSpace: 5px;
@@ -9,7 +57,7 @@
   @border: 1px;
 
   white-space: nowrap;
-  padding: 90px 15px 0 15px;
+  padding-top: 5px; //padding: 90px 15px 0 15px;
   @media print {
     white-space: initial !important;
   }
@@ -45,7 +93,7 @@
 
       .phase {
         display: inline-block;
-        margin: @outsideSpace @outsideSpace @outsideSpace 0;
+        margin-right: @outsideSpace;
         width: @phaseWidth;
 
         .phase-body {
@@ -131,6 +179,10 @@
           margin-top: 5px;
           text-align: center;
 
+          &.phase-longest {
+            color: @flagAtRiskColor;
+          }
+
           .phase-duration {
             font-weight: bold;
           }
@@ -150,4 +202,75 @@
       }
     }
   }
+
+  .iconFont() {
+    font-family: 'xl-release-icons';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .xlr-icon-black-flag() { content: "\EA0B" }
+  .xlr-icon-clock() { content: "\EA12" }
+  .xlr-icon-lightning() { content: "\EA25" }
+
+  .black-flag-icon(@size: 1em, @color: inherit) {
+    padding-right: 2px;
+    position: relative;
+
+    &:before {
+      .iconFont();
+      .xlr-icon-black-flag();
+      color: @color;
+      font-size: @size;
+    }
+  }
+
+  .lighting-icon(@size: 1.2em) {
+    position: relative;
+    &:before {
+      .iconFont();
+      .xlr-icon-lightning();
+      font-size: @size;
+    }
+  }
+
+  .time-icon(@size: 1.2em) {
+    position: relative;
+
+    &:before {
+      .iconFont();
+      .xlr-icon-clock();
+      font-size: @size;
+    }
+  }
+
+  .flag-count {
+    .black-flag-icon();
+    padding-right: 0;
+    &:before {
+      position: relative;
+      top: 2px;
+      padding-right: 2px;
+    }
+  }
+  .failure-count {
+    .lighting-icon();
+    &:before {
+      position: relative;
+      top: 2px;
+    }
+  }
+  .delay-count {
+    .time-icon();
+    &:before {
+      position: relative;
+      top: 2px;
+    }
+  }
+
 }

@@ -1,13 +1,20 @@
+<!--
+Copyright (c) 2018. All rights reserved.
+
+This software and all trademarks, trade names, and logos included herein are the property of XebiaLabs, Inc. and its affiliates, subsidiaries, and licensors.
+-->
+
 <div class="release-value-stream-tile" data-ng-controller="rvsTile.ReleaseValueStreamTileController as vm">
     <div xlr-tile-button on-click="vm.refresh()" title="Refresh" css-class="button primary"
          icon="glyphicon glyphicon-refresh"></div>
     <div ng-if="!vm.loading">
-        <a class="release section color-inherited" ui-sref="vm.release({releaseId: release.id})">
+        <p ng-if="!vm.release" class="not-found">No releases found with specified criteria.</p>
+        <a ng-if="vm.release" class="release section color-inherited" ui-sref="release({releaseId: vm.release.id})">
             <div class="section-header">
                 <span class="release-title">{{ vm.release.title }}</span>
-                <span class="release-details">From {{ vm.release.startDate | date:'mediumDate' }} to {{ vm.release.endDate | date:'mediumDate' }} | Duration {{ getCIDuration(release) | duration}}
-                            <span class="critical-phases-counter" ng-show="vm.getCriticalPhasesCount(release) > 0">
-                                | <span ng-pluralize count="vm.getCriticalPhasesCount(release)"
+                <span class="release-details">From {{ vm.release.startDate | date:'mediumDate' }} to {{ vm.release.endDate | date:'mediumDate' }} | Duration {{ vm.getCIDuration(vm.release) | duration}}
+                            <span class="critical-phases-counter" ng-show="vm.getCriticalPhasesCount(vm.release) > 0">
+                                | <span ng-pluralize count="vm.getCriticalPhasesCount(vm.release)"
                                         when="{'0': '{} tasks', '1': '1 Critical phase', 'other': '{} Critical phases', 'many': '{} Critical phases', 'few': '{} Critical phases'}"></span>
                             </span>
                             <span class="label label-aborted" ng-show="vm.release.status == 'ABORTED'">Aborted</span>
@@ -29,7 +36,7 @@
                                            failures-count="phase.taskFailureCount"></task-counters>
                         </div>
                     </div>
-                    <div class="phase-footer">
+                    <div class="phase-footer" ng-class="{'phase-longest': vm.isLongestPhase(phase)}">
                         <span class="phase-duration">{{ vm.getCIDuration(phase) | duration }}</span>, {{
                         vm.getDurationPercentage(vm.release, phase) }}%
                         <span class="phase-duration-graph" phase-duration></span>

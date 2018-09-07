@@ -1,34 +1,39 @@
-class ReleaseValueStreamTileController {
-    static $inject = ['$scope', 'Backend', 'ConfigurationItemService', 'PhasesService', 'ValueStreamMapping', 'CisLoader', 'ReleasesService'];
+/**
+ * Copyright (c) 2018. All rights reserved.
+ *
+ * This software and all trademarks, trade names, and logos included herein are the property of XebiaLabs, Inc. and its affiliates, subsidiaries, and licensors.
+ */
 
-    constructor($scope, Backend, ConfigurationItemService, PhasesService, ValueStreamMapping, CisLoader, ReleasesService) {
+class ReleaseValueStreamTileController {
+    static $inject = ['$scope', 'Backend', 'ConfigurationItemService', 'PhasesService', 'ValueStreamMapping',
+        'CisLoader', 'ReleasesService', 'ReportTileService'];
+
+    constructor($scope, Backend, ConfigurationItemService, PhasesService, ValueStreamMapping, CisLoader,
+                ReleasesService, ReportTileService) {
         this.tileName = "Release value stream tile";
         this.xlrTile = $scope.xlrTile;
         this._ConfigurationItemService = ConfigurationItemService;
         this._PhasesService = PhasesService;
         this._ValueStreamMapping = ValueStreamMapping;
-        this._CisLoader = CisLoader;
+        this._ReportTileService = ReportTileService;
+        this._Backend = Backend;
+        this._$scope = $scope;
 
-        this.releasesLoader = new CisLoader({
-            searchCis: ReleasesService.searchArchived,
-            filters: {},
-            updateView: (releases) => {
-                this.release = _.sortBy(releases, (release) => release.endDate).reverse()[0];
-            }
-        });
-        this.releasesLoader.loadNextCis();
+        $scope.getDurationPercentage = this.getDurationPercentage.bind(this);
+
+        this.load();
     }
 
     load(config) {
         this.loading = true;
-        const tileId = this.xlrTile.tile.id;
-        // Backend.get("tiles/" + tileId + "/data", config).then(
-        //     function(response) {
-        //         vm.data = response.data.data;
-        //     }
-        // ).finally(function() {
-        //         vm.loading = false;
-        // });
+        this._Backend.post("rvs/search", this._ReportTileService.getTileParams(this._$scope.tile))
+            .then(resp => {
+                if (resp.data.cis.length > 0) {
+                    this.release = resp.data.cis[0];
+                    this._$scope.release = this.release;
+                }
+            })
+            .finally(() => { this.loading = false });
     }
 
     refresh() {
@@ -36,31 +41,55 @@ class ReleaseValueStreamTileController {
     }
 
     getDurationPercentage(release, phase) {
-        return this._PhasesService.getDurationPercentage(release, phase);
+        if (release && phase) {
+            const ciDuration = this._ConfigurationItemService.getCIDuration(release);
+            return ciDuration === 0 ? 0 : Math.round((this._ConfigurationItemService.getCIDuration(phase) * 100) / ciDuration);
+        }
     };
 
     getLeafTasks(phase) {
-        return this._PhasesService.getLeafTasks(phase);
+        if (phase) {
+            return this._PhasesService.getLeafTasks(phase);
+        }
     }
 
     isCritical(phase) {
-        this._ValueStreamMapping.isCritical(phase);
+        if (phase) {
+            return this._ValueStreamMapping.isCritical(phase);
+        }
     }
 
     getWarningThreshold(release) {
-        this._ValueStreamMapping.getWarningThreshold(release);
+        if (release) {
+            return this._ValueStreamMapping.getWarningThreshold(release);
+        }
     }
 
     getErrorThreshold(release) {
-        this._ValueStreamMapping.getErrorThreshold(release);
+        if (release) {
+            return this._ValueStreamMapping.getErrorThreshold(release);
+        }
     }
 
     getCriticalPhasesCount(release) {
-        this._ValueStreamMapping.getCriticalPhasesCount(release);
+        if (release) {
+            return this._ValueStreamMapping.getCriticalPhasesCount(release);
+        }
     }
 
     getCIDuration(phase) {
-        this._ConfigurationItemService.getCIDuration(phase);
+        if (phase) {
+            return this._ConfigurationItemService.getCIDuration(phase);
+        }
+    }
+
+    isLongestPhase(phase) {
+        if (this.release && phase) {
+            const current = this.getCIDuration(phase);
+            const durations = [];
+            this.release.phases.forEach(p => durations.push(this.getCIDuration(p)));
+            return (Math.max(...durations) === current);
+        }
     }
 }
 
