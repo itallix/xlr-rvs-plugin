@@ -56,18 +56,12 @@ dependencyManagement {
 
 sourceSets {
     // js are processed by webpack
-    main {
-        scala.srcDirs = ["src/main/scala"]
-        resources {
-            exclude '**/*.js'
-        }
+    main.resources {
+        exclude '**/*.js'
+        exclude '**/js/'
+        exclude '**/css/'
     }
-    test {
-        resources {
-            srcDirs = ["src/test/resources"]
-            exclude '**/*.js'
-        }
-    }
+    test.resources.exclude '**/*.js'
 }
 
 task yarnRunBuild(type: YarnTask) {
