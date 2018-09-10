@@ -12,7 +12,7 @@ This software and all trademarks, trade names, and logos included herein are the
         <a ng-if="vm.release" class="release section color-inherited" ui-sref="release({releaseId: vm.release.id})">
             <div class="section-header">
                 <span class="release-title">{{ vm.release.title }}</span>
-                <span class="release-details">From {{ vm.release.startDate | date:'mediumDate' }} to {{ vm.release.endDate | date:'mediumDate' }} | Duration {{ vm.getCIDuration(vm.release) | duration}}
+                <span class="release-details">{{ vm.releaseCount }} runs | Average duration {{ vm.getCIDuration(vm.release) | duration}}
                             <span class="critical-phases-counter" ng-show="vm.getCriticalPhasesCount(vm.release) > 0">
                                 | <span ng-pluralize count="vm.getCriticalPhasesCount(vm.release)"
                                         when="{'0': '{} tasks', '1': '1 Critical phase', 'other': '{} Critical phases', 'many': '{} Critical phases', 'few': '{} Critical phases'}"></span>

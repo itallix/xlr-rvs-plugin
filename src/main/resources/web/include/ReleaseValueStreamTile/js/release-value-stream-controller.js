@@ -31,6 +31,8 @@ class ReleaseValueStreamTileController {
                 if (resp.data.cis.length > 0) {
                     this.release = resp.data.cis[0];
                     this._$scope.release = this.release;
+                    this.releaseCount = resp.data.cis.length;
+                    this._$scope.releaseCount = this.releaseCount;
                 }
             })
             .finally(() => { this.loading = false });
