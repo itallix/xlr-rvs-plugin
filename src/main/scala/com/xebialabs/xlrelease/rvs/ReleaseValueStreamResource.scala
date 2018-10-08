@@ -21,7 +21,7 @@ import javax.ws.rs.{Consumes, POST, Path, Produces}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 
-@Path("/rvs")
+@Path("/rvs-scala")
 @Consumes(Array(MediaType.APPLICATION_JSON))
 @Produces(Array(MediaType.APPLICATION_JSON))
 @Controller
