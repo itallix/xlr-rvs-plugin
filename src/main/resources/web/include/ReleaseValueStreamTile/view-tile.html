@@ -26,6 +26,9 @@ This software and all trademarks, trade names, and logos included herein are the
                     <div class="phase-body">
                         <div class="phase-header" ng-style="{'border-top-color': phase.color}">
                             <span class="phase-title">{{ phase.title }}</span>
+                            <span class="pull-right custom-script-image ng-scope" style="margin: 3px 6px 0px -16px;">
+                                <img src="static/@project.version@/jenkins/jenkins.png" style="width: 24px">
+                            </span>
                         </div>
                         <div class="phase-content">
                                         <span ng-pluralize count="vm.getLeafTasks(phase).length"
