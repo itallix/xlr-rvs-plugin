@@ -58,8 +58,7 @@ public class ReleaseValueStreamSummaryResource {
     public ReleaseSearchView getData(ReportForm reportForm) {
         checkPermission(reportForm);
         List<Release> releases = releaseValueStream.getCompletedReleases(ReportParams.apply(reportForm));
-        ReleaseSearchResult searchResult = ReleaseSearchResult.empty(1);
-        searchResult.addReleases(releases);
+        ReleaseSearchResult searchResult = new ReleaseSearchResult(releases, 1);
 
         return releaseViewConverter.toSearchView(searchResult, taskAccessService.getAllowedTaskTypesForAuthenticatedUser(),
                 new ArrayList<String>(), 10, new ArrayList<String>());
