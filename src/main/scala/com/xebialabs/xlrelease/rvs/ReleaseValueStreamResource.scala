@@ -34,7 +34,7 @@ class ReleaseValueStreamResource @Autowired()(val permissions: PermissionChecker
   @Path("search") def getData(reportForm: ReportForm): ReleaseSearchView = {
     checkPermission(reportForm)
     val releases = releaseValueStream.getCompletedReleases(ReportParams.apply(reportForm))
-    val searchResult = new ReleaseSearchResult
+    val searchResult = ReleaseSearchResult.empty(1)
     searchResult.addReleases(releases)
     releaseViewConverter.toSearchView(searchResult, taskAccessService.getAllowedTaskTypesForAuthenticatedUser,
       new util.ArrayList[String], 10, new util.ArrayList[String])
